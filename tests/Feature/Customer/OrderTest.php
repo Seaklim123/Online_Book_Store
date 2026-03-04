@@ -9,6 +9,7 @@ use App\Models\ShoppingCart;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 
 class OrderTest extends TestCase
 {
@@ -26,11 +27,16 @@ class OrderTest extends TestCase
     public function test_customer_can_complete_checkout()
     {
         // 1. Arrange
+        $delivery = \App\Models\Delivery::create([
+            'location' => 'Phnom Penh',
+            'cost'     => 5.00,
+            'active'   => true,
+        ]);
         $user = \App\Models\User::factory()->create();
         $user->assignRole('customer');
         $book = \App\Models\Book::factory()->create(['price' => 20, 'stock' => 10]);
-
-        // Create the Shopping Cart in DB (Controller uses firstOrFail())
+        $this->withoutMiddleware(VerifyCsrfToken::class);
+        
         $cart = \App\Models\ShoppingCart::create([
             'customer_id' => $user->id,
             'status'      => 0,
@@ -46,21 +52,22 @@ class OrderTest extends TestCase
         // 2. Act
         $response = $this->actingAs($user)->post(route('checkout.placeOrder'), [
             'phone_number'     => '0123456789',
+            'shipping_fee'    => 5.00,
             'shipping_address' => '123 Test Street, Phnom Penh',
-            'payment_method'   => 'delivery', // MUST be 'online' or 'delivery'
-            // 'transaction_image' is nullable because payment_method is 'delivery'
+            'payment_method'   => 'delivery', 
+            'delivery_id'      => $delivery->id,
+            
         ]);
 
-        // 3. Debug: If it still fails, this shows exactly what's wrong
         if (session('errors')) {
             dump(session('errors')->getMessages());
         }
 
-        // 4. Assert
-        $response->assertRedirect(); // Controller redirects to customer.orders.index
+        $response->assertRedirect(); 
         
         $this->assertDatabaseHas('orders', [
             'customer_id'      => $user->id,
+            'shipping_fee'     => 5.00,
             'shipping_address' => '123 Test Street, Phnom Penh',
             'payment_method'   => 'delivery',
         ]);

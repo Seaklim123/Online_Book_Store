@@ -9,7 +9,6 @@ class Book extends Model
 {
     use HasFactory; 
 
-    // include computed price in JSON responses
     protected $appends = ['discounted_price'];
 
     protected $fillable = [
@@ -21,7 +20,7 @@ class Book extends Model
         'price', 
         'stock', 
         'cover_image',
-        'discount_id', // reference to discount table
+        'discount_id', 
     ];
 
     public function category()
