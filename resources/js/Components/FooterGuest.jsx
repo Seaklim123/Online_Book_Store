@@ -1,0 +1,64 @@
+import { Link } from '@inertiajs/react';
+
+const Footer = () => {
+    return (
+        <footer className="bg-[#bda081] text-white mt-12 rounded-b-lg shadow-inner">
+            <div className="container mx-auto px-4 py-8">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    
+                    {/* About Section */}
+                    <div>
+                        <h3 className="text-xl font-bold mb-4">📚 Bookstore</h3>
+                        <p className="text-black">
+                            Your one-stop shop for all your reading needs.
+                            Discover thousands of books across all genres.
+                        </p>
+                    </div>
+
+                    {/* Quick Links */}
+                    <div>
+                        <h3 className="text-xl font-bold mb-4">Quick Links</h3>
+                        <ul className="space-y-2 text-black">
+                            <li>
+                                <Link href={route('welcome')} className="hover:text-black">
+                                    Home
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href={route('books.index')} className="hover:text-black">
+                                    Books
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href={route('about')} className="hover:text-black ">
+                                    About Us
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href={route('contact')} className="hover:text-black">
+                                    Contact
+                                </Link>
+                            </li>
+                        </ul>
+                    </div>
+
+                    {/* Contact Info */}
+                    <div>
+                        <h3 className="text-xl font-bold mb-4">Contact Us</h3>
+                        <ul className="space-y-2 text-black">
+                            <li>📧 Email: info@bookstore.com</li>
+                            <li>📞 Phone: +1 234 567 890</li>
+                            <li>📍 Address: 123 Book Street, Reading City</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div className="border-t border-gray-700 mt-8 pt-6 text-center text-black">
+                    <p>&copy; {new Date().getFullYear()} Bookstore. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    );
+};
+
+export default Footer;
