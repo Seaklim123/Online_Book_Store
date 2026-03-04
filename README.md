@@ -1,0 +1,66 @@
+# Step 01
+composer install
+
+# Step 02
+npm install
+
+# Step 03 / Add new table or column
+php artisan migrate
+
+# Step 04 / Run Seeder
+php artisan db:seed --class=PermissionSeeder
+php artisan db:seed --class=UserSeeder
+
+php artisan jwt:secret
+
+# Running project
+php artisan serve
+npm run dev
+
+# If we got error "No application encryption key has been specified."
+php artisan key:generate
+
+
+# Delele Data All Table
+php artisan migrate:refresh
+
+# Delete Data One Table
+php artisan migrate:refresh --path=""
+
+# clear cache, route, config
+php artisan cache:clear
+php artisan config:clear
+php artisan view:clear
+php artisan route:clear
+php artisan route:cache
+php artisan config:cache
+
+# Run the queue worker:
+php artisan queue:work
+
+# permission reset
+php artisan permission:cache-reset
+
+# command create table
+php artisan make:migration create_orders_table
+
+# command create model
+php artisan make:model Order -m
+
+# command create controller 
+php artisan make:controller OrderController
+
+
+# php artisan storage:link
+
+
+php artisan make:model YourModelName -mcr
+
+
+# testing
+- composer require --dev phpunit/phpunit
+- ./vendor/bin/phpunit --version
+1. php artisan test
+2. php artisan test --testsunite=Unit
+3. php artisan make:test NameTest --unit
+
