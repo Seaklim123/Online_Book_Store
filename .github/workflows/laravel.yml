@@ -1,4 +1,4 @@
-name: Laravel
+name: Laravel CI/CD
 
 on:
   push:
@@ -11,9 +11,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    # 1. Checkout code
     - uses: actions/checkout@v4
 
-    # 1. Setup PHP
+    # 2. Setup PHP
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
@@ -21,39 +22,38 @@ jobs:
         extensions: mbstring, dom, curl, libxml, sqlite3
         coverage: none
 
-    # 2. Setup Node.js (Fixes "Vite manifest not found")
+    # 3. Setup Node
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '20'
 
-    # 3. Install PHP Dependencies
+    # 4. Install Composer dependencies
     - name: Install Composer Dependencies
-      run: composer update -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+      run: composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader
 
-    # 4. Install Node Dependencies & Build Assets
+    # 5. Install Node dependencies & build assets
     - name: Install NPM & Build
       run: |
-        npm install
+        npm ci
         npm run build
 
-    # 5. Prepare Environment
+    # 6. Prepare environment
     - name: Prepare Laravel Environment
       run: |
         php -r "file_exists('.env') || copy('.env.example', '.env');"
         php artisan key:generate
-        mkdir -p storage/framework/sessions storage/framework/views storage/framework/cache
-        mkdir -p bootstrap/cache
+        mkdir -p storage/framework/{sessions,views,cache} bootstrap/cache
         chmod -R 777 storage bootstrap/cache
+        mkdir -p database
         touch database/database.sqlite
 
-    # 6. Execute Tests
+    # 7. Run tests
     - name: Execute Tests
       env:
         DB_CONNECTION: sqlite
-        DB_DATABASE: database/database.sqlite
+        DB_DATABASE: ${{ github.workspace }}/database/database.sqlite
         CACHE_STORE: array
         SESSION_DRIVER: array
-        # This tells Laravel to skip Vite manifest checks if needed
-        VITE_ENABLED: false 
-      run: php artisan test
+        VITE_ENABLED: false
+      run: php artisan test --parallel
