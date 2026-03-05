@@ -44,6 +44,7 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           port: ${{ secrets.FTP_PORT }}
+          protocol: ftp
           # Use './' to deploy everything, or './dist' to only deploy built assets
           local-dir: ./ 
           # Ensure this matches your cPanel path (e.g., /public_html/ or /public_html/subfolder/)
