@@ -55,4 +55,4 @@ jobs:
 
       # NEW: Tells cPanel to run the unzip script
       - name: Trigger Unzip
-        run: curl -s https://yourdomain.com
+        run: curl -s https://dpdc539.dpdatacenter.com
