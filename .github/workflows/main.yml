@@ -55,6 +55,5 @@ jobs:
             **/.github/**
             **/node_modules/**
             **/tests/**
-            **/vendor/**
             .gitignore
             README.md
