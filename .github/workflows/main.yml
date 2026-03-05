@@ -11,11 +11,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Get the latest code from the repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Build process (PHP/Composer)
       - name: Install PHP & Composer Dependencies
         uses: shivammathur/setup-php@v2
         with:
@@ -25,7 +23,6 @@ jobs:
       - name: Install Composer Dependencies
         run: composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader
 
-      # 3. Build process (Node.js/NPM)
       - name: Setup Node.js & Build
         uses: actions/setup-node@v4
         with:
@@ -36,7 +33,11 @@ jobs:
           npm ci
           npm run build
 
-      # 4. Sync files to cPanel server
+      # NEW: This step zips everything into ONE file (takes 5 seconds)
+      - name: Create Zip Archive
+        run: zip -r deploy.zip . -x ".git*" ".github/*" "node_modules/*"
+
+      # UPDATED: Uploads ONLY the zip and the extractor script
       - name: FTP Deploy
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
@@ -45,15 +46,13 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           port: ${{ secrets.FTP_PORT }}
           protocol: ftp
-          # Use './' to deploy everything, or './dist' to only deploy built assets
-          local-dir: ./ 
-          # Ensure this matches your cPanel path (e.g., /public_html/ or /public_html/subfolder/)
-          server-dir: /public_html/ 
-          # Exclude files you don't want on the live server
+          local-dir: ./
+          server-dir: /public_html/
           exclude: |
-            **/.git*
-            **/.github/**
-            **/node_modules/**
-            **/tests/**
-            .gitignore
-            README.md
+            **/*
+            !deploy.zip
+            !extract.php
+
+      # NEW: Tells cPanel to run the unzip script
+      - name: Trigger Unzip
+        run: curl -s https://yourdomain.com
