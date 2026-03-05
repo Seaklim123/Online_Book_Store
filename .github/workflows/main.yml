@@ -11,9 +11,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Get the latest code
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # 2. Setup PHP and install dependencies (Crucial for vendor folder)
       - name: Install PHP & Composer Dependencies
         uses: shivammathur/setup-php@v2
         with:
@@ -23,6 +25,7 @@ jobs:
       - name: Install Composer Dependencies
         run: composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader
 
+      # 3. Setup Node and build assets
       - name: Setup Node.js & Build
         uses: actions/setup-node@v4
         with:
@@ -33,11 +36,11 @@ jobs:
           npm ci
           npm run build
 
-      # NEW: This step zips everything into ONE file (takes 5 seconds)
+      # 4. ZIP EVERYTHING (Fixed: explicitly including vendor)
       - name: Create Zip Archive
-        run: zip -r deploy.zip . -x ".git*" ".github/*" "node_modules/*"
+        run: zip -r deploy.zip . -x ".git/*" ".github/*" "node_modules/*" "tests/*"
 
-      # UPDATED: Uploads ONLY the zip and the extractor script
+      # 5. UPLOAD ONLY ZIP AND EXTRACTOR
       - name: FTP Deploy
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
@@ -53,6 +56,6 @@ jobs:
             !deploy.zip
             !extract.php
 
-      # NEW: Tells cPanel to run the unzip script
+      # 6. TRIGGER EXTRACTION (Fixed: added -k for SSL and added /extract.php)
       - name: Trigger Unzip
-        run: curl -s https://dpdc539.dpdatacenter.com
+        run: curl -k -s https://dpdc539.dpdatacenter.com
