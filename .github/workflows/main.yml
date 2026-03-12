@@ -1,61 +1,54 @@
-name: Deploy to cPanel
+name: Publish to CPanel
 
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
-  FTP-Deploy:
-    name: Deploy via FTP
+  FTP-Deploy-Action:
+    name: FTP Deploy
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Get the latest code
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Setup PHP and install dependencies (Crucial for vendor folder)
-      - name: Install PHP & Composer Dependencies
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
-          extensions: mbstring, dom, curl, bcmath, sqlite3
-      
-      - name: Install Composer Dependencies
-        run: composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader
-
-      # 3. Setup Node and build assets
-      - name: Setup Node.js & Build
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          
-      - name: Install NPM dependencies and build
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies and build assets
         run: |
-          npm ci
+          npm install --legacy-peer-deps
           npm run build
 
-      # 4. ZIP EVERYTHING (Fixed: explicitly including vendor)
-      - name: Create Zip Archive
-        run: zip -r deploy.zip . -x ".git/*" ".github/*" "node_modules/*" "tests/*"
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          tools: composer
 
-      # 5. UPLOAD ONLY ZIP AND EXTRACTOR
-      - name: FTP Deploy
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      - name: Install PHP dependencies
+        run: composer install --no-dev --optimize-autoloader
+
+      - name: Create .env file
+        run: |
+          echo "ADMIN_TELEGRAM_TOKEN=${{ secrets.ADMIN_TELEGRAM_TOKEN }}" >> .env
+          echo "ADMIN_TELEGRAM_CHAT_ID=${{ secrets.ADMIN_TELEGRAM_CHAT_ID }}" >> .env
+          echo "DEV_TELEGRAM_TOKEN=${{ secrets.DEV_TELEGRAM_TOKEN }}" >> .env
+          echo "DEV_TELEGRAM_CHAT_ID=${{ secrets.DEV_TELEGRAM_CHAT_ID }}" >> .env
+          echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> .env
+          echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> .env
+          echo "GOOGLE_REDIRECT_URI=${{ secrets.GOOGLE_REDIRECT_URI }}" >> .env
+          echo "VITE_APP_NAME=\${APP_NAME}" >> .env
+
+      - name: Deploy to CPanel via FTP
+        uses: SamKirkland/FTP-Deploy-Action@4.3.3
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           port: ${{ secrets.FTP_PORT }}
-          protocol: ftp
-          local-dir: ./
-          server-dir: /public_html/
-          exclude: |
-            **/*
-            !deploy.zip
-            !extract.php
-
-      # 6. TRIGGER EXTRACTION (Fixed: added -k for SSL and added /extract.php)
-      - name: Trigger Unzip
-        run: curl -k -s https://dpdc539.dpdatacenter.com
