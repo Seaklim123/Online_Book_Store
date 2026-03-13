@@ -7,40 +7,54 @@ on:
 
 jobs:
   FTP-Deploy:
-    name: Deploy Laravel + React via FTP
     runs-on: ubuntu-latest
-
     steps:
-      # 1️⃣ Checkout code
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v4
 
-      # 2️⃣ Setup Node
+      # Cache Node modules
+      - name: Cache NPM
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      # Setup Node
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
 
-      # 3️⃣ Install NPM + Build React
-      - name: Install dependencies and build assets
+      # Install Node dependencies + build React
+      - name: Build React
         run: |
           npm install --legacy-peer-deps
           npm run build
 
-      # 4️⃣ Setup PHP
+      # Cache Composer dependencies
+      - name: Cache Composer
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      # Setup PHP
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
           tools: composer
 
-      # 5️⃣ Install Laravel dependencies
-      - name: Install Composer dependencies
+      # Install Composer dependencies
+      - name: Install Composer
         run: composer install --no-dev --optimize-autoloader
 
-      # 6️⃣ Laravel optimization
-      - name: Laravel optimize
+      # Laravel optimizations
+      - name: Optimize Laravel
         run: |
           php artisan storage:link || true
           php artisan config:cache || true
@@ -48,7 +62,7 @@ jobs:
           php artisan view:cache || true
           php artisan optimize || true
 
-      # 7️⃣ Deploy to cPanel via FTP
+      # Deploy to cPanel via FTP
       - name: FTP Deploy
         uses: SamKirkland/FTP-Deploy-Action@4.3.3
         with:
