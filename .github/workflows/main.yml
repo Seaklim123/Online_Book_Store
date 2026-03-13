@@ -7,71 +7,49 @@ on:
 
 jobs:
   FTP-Deploy:
-    name: FTP Deploy Laravel + React
+    name: Deploy Laravel + React via FTP
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout the repo
+      # 1️⃣ Checkout code
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2️⃣ Setup Node.js for React build
+      # 2️⃣ Setup Node
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
+          cache: npm
 
-      # 3️⃣ Install dependencies and build React assets
-      - name: Install NPM dependencies and build assets
+      # 3️⃣ Install NPM + Build React
+      - name: Install dependencies and build assets
         run: |
           npm install --legacy-peer-deps
           npm run build
 
-      # 4️⃣ Setup PHP and Composer
+      # 4️⃣ Setup PHP
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.3'
+          php-version: '8.2'
           tools: composer
 
-      # 5️⃣ Install Laravel composer dependencies
-      - name: Install PHP dependencies
+      # 5️⃣ Install Laravel dependencies
+      - name: Install Composer dependencies
         run: composer install --no-dev --optimize-autoloader
 
-      # 6️⃣ Create .env file from GitHub Secrets
-      - name: Create .env file
+      # 6️⃣ Laravel optimization
+      - name: Laravel optimize
         run: |
-          echo "APP_NAME=${{ secrets.APP_NAME }}" >> .env
-          echo "APP_ENV=production" >> .env
-          echo "APP_DEBUG=false" >> .env
-          echo "APP_URL=${{ secrets.APP_URL }}" >> .env
-          echo "DB_CONNECTION=mysql" >> .env
-          echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
-          echo "DB_PORT=3306" >> .env
-          echo "DB_DATABASE=${{ secrets.DB_DATABASE }}" >> .env
-          echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
-          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
-          echo "ADMIN_TELEGRAM_TOKEN=${{ secrets.ADMIN_TELEGRAM_TOKEN }}" >> .env
-          echo "ADMIN_TELEGRAM_CHAT_ID=${{ secrets.ADMIN_TELEGRAM_CHAT_ID }}" >> .env
-          echo "DEV_TELEGRAM_TOKEN=${{ secrets.DEV_TELEGRAM_TOKEN }}" >> .env
-          echo "DEV_TELEGRAM_CHAT_ID=${{ secrets.DEV_TELEGRAM_CHAT_ID }}" >> .env
-          echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> .env
-          echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> .env
-          echo "GOOGLE_REDIRECT_URI=${{ secrets.GOOGLE_REDIRECT_URI }}" >> .env
-          echo "VITE_APP_NAME=${{ secrets.APP_NAME }}" >> .env
+          php artisan storage:link || true
+          php artisan config:cache || true
+          php artisan route:cache || true
+          php artisan view:cache || true
+          php artisan optimize || true
 
-      # 7️⃣ Run Laravel Artisan commands (pre-build) locally in Actions
-      - name: Laravel optimize & storage link
-        run: |
-          php artisan storage:link
-          php artisan config:cache
-          php artisan route:cache
-          php artisan view:cache
-          php artisan optimize
-
-      # 8️⃣ Deploy via FTP
-      - name: Deploy to CPanel via FTP
+      # 7️⃣ Deploy to cPanel via FTP
+      - name: FTP Deploy
         uses: SamKirkland/FTP-Deploy-Action@4.3.3
         with:
           server: ${{ secrets.FTP_SERVER }}
@@ -80,5 +58,8 @@ jobs:
           port: ${{ secrets.FTP_PORT }}
           server-dir: /public_html/
           exclude: |
-            .env
+            .git/
+            node_modules/
             storage/
+            tests/
+            .env
