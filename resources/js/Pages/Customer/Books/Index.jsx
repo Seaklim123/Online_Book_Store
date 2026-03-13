@@ -7,8 +7,6 @@ import Swal from 'sweetalert2';
 export default function Index({ books, auth, categories }) {
     const [loginOpen, setLoginOpen] = useState(false);
     const [registerOpen, setRegisterOpen] = useState(false);
-
-
     const [search, setSearch] = useState('');
     const [filterCategory, setFilterCategory] = useState('');
     const [filteredBooks, setFilteredBooks] = useState(books.data || []);
@@ -46,7 +44,7 @@ export default function Index({ books, auth, categories }) {
         quantity: quantity 
     }, {
         onSuccess: () => {
-            // Success Toast Confirmation
+           
             Swal.fire({
                 toast: true,
                 position: 'top-end',
@@ -82,7 +80,6 @@ export default function Index({ books, auth, categories }) {
 
             <main className="flex-grow pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
                 
-                {/* RESTORED FILTERS SECTION */}
                 <div className="flex flex-col md:flex-row gap-4 mb-10">
                     <div className="relative flex-grow shadow-sm rounded-xl overflow-hidden">
                         <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -111,12 +108,10 @@ export default function Index({ books, auth, categories }) {
                     </div>
                 </div>
 
-                {/* GRID SECTION */}
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
                     {filteredBooks.length > 0 ? (
                         filteredBooks.map(book => (
                             <div key={book.id} className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col h-full border border-gray-100">
-                                {/* Aspect Ratio Box (2:3) */}
                                 <div 
                                     className="relative aspect-[2/3] overflow-hidden bg-gray-200 cursor-pointer"
                                     onClick={() => handleViewBook(book.id)}
@@ -162,7 +157,7 @@ export default function Index({ books, auth, categories }) {
                                         </span>
                                     </div>
 
-                                    <div className="space-y-2 mt-auto">
+                                    <div className="flex gap-2 mt-auto">
                                         <button
                                             disabled={book.stock === 0}
                                             onClick={() => {

@@ -55,7 +55,6 @@ export default function Welcome({ auth, bestSellers = [] }) {
                     </div>
                 </div>
 
-                {/* BEST SELLERS SECTION */}
                 <div className="py-20 bg-white/20">
                     <div className="container mx-auto px-6">
                         <h2 className="text-4xl font-serif text-center mb-12">Our <span className="text-[#bd874e]">Best Sellers</span></h2>
@@ -81,7 +80,7 @@ export default function Welcome({ auth, bestSellers = [] }) {
                                             </div>
                                         </div>
 
-                                        {/* INFO SECTION */}
+                                       
                                         <div className="p-4 flex flex-col flex-grow">
                                             <h3 className="text-sm font-bold text-gray-900 truncate mb-1">{book.title}</h3>
                                             <p className="text-xs text-gray-500 truncate mb-2">{book.author}</p>
@@ -90,7 +89,7 @@ export default function Welcome({ auth, bestSellers = [] }) {
                                                     {book.category_name || 'General'}
                                                 </span>
                                             </div>
-                                            {/* ACTION BUTTON */}
+                                            
                                             <button 
                                                 onClick={() => handleAddToCart(book.id)}
                                                 className="mt-4 w-full bg-[#bda081] hover:bg-[#a68b6d] text-white text-xs font-bold py-2 rounded-lg transition-colors flex items-center justify-center gap-2"
