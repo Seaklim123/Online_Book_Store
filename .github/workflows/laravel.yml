@@ -11,49 +11,52 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # 1. Checkout code
-    - uses: actions/checkout@v4
+      # 1️⃣ Checkout code
+      - uses: actions/checkout@v4
 
-    # 2. Setup PHP
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: '8.2'
-        extensions: mbstring, dom, curl, libxml, bcmath, sqlite3
-        coverage: none
+      # 2️⃣ Setup PHP
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, dom, curl, libxml, bcmath, sqlite3
+          coverage: none
 
-    # 3. Setup Node.js
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
+      # 3️⃣ Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
 
-    # 4. Install Composer dependencies
-    - name: Install Composer Dependencies
-      run: composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader
+      # 4️⃣ Install NPM dependencies
+      - name: Install NPM dependencies
+        run: npm install --legacy-peer-deps
 
-    # 5. Install Node dependencies & build assets
-    - name: Install NPM & Build
-      run: |
-        npm ci
-        npm run build
+      # 5️⃣ Install Composer dependencies
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader
 
-    # 6. Prepare Laravel environment
-    - name: Prepare Laravel Environment
-      run: |
-        php -r "file_exists('.env') || copy('.env.example', '.env');"
-        php artisan key:generate
-        mkdir -p storage/framework/{sessions,views,cache} bootstrap/cache
-        chmod -R 777 storage bootstrap/cache
-        mkdir -p database
-        touch database/database.sqlite
+      # 6️⃣ Build React / Vite assets
+      - name: Build NPM assets
+        run: npm run build
 
-    # 7. Run tests (sequential, safe)
-    - name: Execute Tests
-      env:
-        DB_CONNECTION: sqlite
-        DB_DATABASE: ${{ github.workspace }}/database/database.sqlite
-        CACHE_STORE: array
-        SESSION_DRIVER: array
-        VITE_ENABLED: false
-      run: php artisan test
+      # 7️⃣ Prepare Laravel environment
+      - name: Prepare Laravel Environment
+        run: |
+          php -r "file_exists('.env') || copy('.env.example', '.env');"
+          php artisan key:generate
+          mkdir -p storage/framework/{sessions,views,cache} bootstrap/cache
+          chmod -R 777 storage bootstrap/cache
+          mkdir -p database
+          touch database/database.sqlite
+
+      # 8️⃣ Run tests
+      - name: Execute Tests
+        env:
+          DB_CONNECTION: sqlite
+          DB_DATABASE: ${{ github.workspace }}/database/database.sqlite
+          CACHE_STORE: array
+          SESSION_DRIVER: array
+          VITE_ENABLED: false
+        run: php artisan test
