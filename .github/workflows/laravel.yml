@@ -30,6 +30,7 @@ jobs:
 
     # 4. Install Composer dependencies
     - name: Install Composer Dependencies
+      run: npm install --legacy-peer-deps
       run: composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader
 
     # 5. Install Node dependencies & build assets
