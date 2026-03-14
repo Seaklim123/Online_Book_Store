@@ -10,33 +10,34 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1️⃣ Checkout code
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      # Setup Node
+      # 2️⃣ Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      # Install dependencies and build frontend
+      # 3️⃣ Install frontend dependencies & build React/Vite
       - name: Build React / Vite
         run: |
           npm install --legacy-peer-deps
           npm run build
 
-      # Setup PHP
+      # 4️⃣ Setup PHP
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
           tools: composer
 
-      # Install Laravel dependencies
+      # 5️⃣ Install Laravel dependencies
       - name: Install Composer
         run: composer install --no-dev --optimize-autoloader
 
-      # Laravel optimization
+      # 6️⃣ Laravel optimization
       - name: Optimize Laravel
         run: |
           php artisan config:cache || true
@@ -44,7 +45,7 @@ jobs:
           php artisan view:cache || true
           php artisan optimize || true
 
-      # Deploy via FTP
+      # 7️⃣ FTP Deployment
       - name: FTP Deploy
         uses: SamKirkland/FTP-Deploy-Action@4.3.3
         with:
@@ -53,6 +54,8 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           port: ${{ secrets.FTP_PORT }}
           server-dir: /public_html/
+          passive: true           # Important: avoids firewall/timeout issues
+          timeout: 300           # Increase timeout for large uploads
           exclude: |
             .git/
             node_modules/
