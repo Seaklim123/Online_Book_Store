@@ -8,18 +8,10 @@ on:
 jobs:
   FTP-Deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-
-      # Cache Node modules
-      - name: Cache NPM
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
 
       # Setup Node
       - name: Setup Node.js
@@ -27,20 +19,11 @@ jobs:
         with:
           node-version: 20
 
-      # Install Node dependencies + build React
-      - name: Build React
+      # Install dependencies and build frontend
+      - name: Build React / Vite
         run: |
           npm install --legacy-peer-deps
           npm run build
-
-      # Cache Composer dependencies
-      - name: Cache Composer
-        uses: actions/cache@v3
-        with:
-          path: vendor
-          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-composer-
 
       # Setup PHP
       - name: Setup PHP
@@ -49,20 +32,19 @@ jobs:
           php-version: '8.2'
           tools: composer
 
-      # Install Composer dependencies
+      # Install Laravel dependencies
       - name: Install Composer
         run: composer install --no-dev --optimize-autoloader
 
-      # Laravel optimizations
+      # Laravel optimization
       - name: Optimize Laravel
         run: |
-          php artisan storage:link || true
           php artisan config:cache || true
           php artisan route:cache || true
           php artisan view:cache || true
           php artisan optimize || true
 
-      # Deploy to cPanel via FTP
+      # Deploy via FTP
       - name: FTP Deploy
         uses: SamKirkland/FTP-Deploy-Action@4.3.3
         with:
@@ -74,6 +56,6 @@ jobs:
           exclude: |
             .git/
             node_modules/
-            storage/
             tests/
+            storage/logs/
             .env
