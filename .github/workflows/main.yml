@@ -51,6 +51,7 @@ jobs:
           timeout: 900   
           force: true       
           exclude: |
+              vendor/**
               **/.git*
               **/.github*
               node_modules/**
