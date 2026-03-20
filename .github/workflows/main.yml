@@ -18,10 +18,11 @@ jobs:
         with:
           node-version: 20
 
-      - name: Build React / Vite
-        run: |
-          npm install --legacy-peer-deps
-          npm run build
+      - name: Install Node Dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Build Vite
+        run: npm run build
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -29,7 +30,7 @@ jobs:
           php-version: '8.2'
           tools: composer
 
-      - name: Install Composer
+      - name: Install Composer Dependencies
         run: composer install --no-dev --optimize-autoloader
 
       - name: Optimize Laravel
@@ -37,9 +38,8 @@ jobs:
           php artisan config:cache || true
           php artisan route:cache || true
           php artisan view:cache || true
-          php artisan optimize || true
-
-      - name: FTP Deploy
+          
+      - name: Deploy to cPanel via FTP
         uses: SamKirkland/FTP-Deploy-Action@4.3.3
         with:
           server: ${{ secrets.FTP_SERVER }}
@@ -47,17 +47,16 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           port: ${{ secrets.FTP_PORT }}
           server-dir: /public_html/
-          passive: true           
-          timeout: 900   
-          force: true       
+          passive: true
+          timeout: 900
+          force: true
           exclude: |
-              vendor/**
-              **/.git*
-              **/.github*
-              node_modules/**
-              tests/**
-              storage/logs/**
-              storage/framework/cache/**
-              storage/framework/sessions/**
-              storage/framework/views/**
-              .env
+            **/.git*
+            **/.github*
+            node_modules/**
+            tests/**
+            storage/logs/**
+            storage/framework/cache/**
+            storage/framework/sessions/**
+            storage/framework/views/**
+            .env
