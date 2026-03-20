@@ -48,7 +48,7 @@ jobs:
           port: ${{ secrets.FTP_PORT }}
           server-dir: /public_html/
           passive: true           
-          timeout: 300          
+          timeout: 900          
           exclude: |
               **/.git*
               **/.github*
