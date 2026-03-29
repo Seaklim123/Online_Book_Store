@@ -1,62 +1,61 @@
-name: Publish to CPanel
+# name: Publish to CPanel
 
-on:
-  push:
-    branches:
-      - main
+# on:
+#   push:
+#     branches:
+#       - main
 
-jobs:
-  FTP-Deploy:
-    runs-on: ubuntu-latest
+# jobs:
+#   FTP-Deploy:
+#     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+#     steps:
+#       - name: Checkout repo
+#         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
+#       - name: Setup Node.js
+#         uses: actions/setup-node@v4
+#         with:
+#           node-version: 20
 
-      - name: Install Node Dependencies
-        run: npm install --legacy-peer-deps
+#       - name: Install Node Dependencies
+#         run: npm install --legacy-peer-deps
 
-      - name: Build Vite
-        run: npm run build
+#       - name: Build Vite
+#         run: npm run build
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
-          tools: composer
+#       - name: Setup PHP
+#         uses: shivammathur/setup-php@v2
+#         with:
+#           php-version: '8.2'
+#           tools: composer
 
-      - name: Install Composer Dependencies
-        run: composer install --no-dev --optimize-autoloader
+#       - name: Install Composer Dependencies
+#         run: composer install --no-dev --optimize-autoloader
 
-      - name: Optimize Laravel
-        run: |
-          php artisan config:cache || true
-          php artisan route:cache || true
-          php artisan view:cache || true
-          
-      - name: Deploy to cPanel via FTP
-        uses: SamKirkland/FTP-Deploy-Action@4.3.3
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          port: ${{ secrets.FTP_PORT }}
-          server-dir: /public_html/
-          passive: true
-          timeout: 900
-          force: true
-          exclude: |
-            **/.git*
-            **/.github*
-            node_modules/**
-            tests/**
-            storage/logs/**
-            storage/framework/cache/**
-            storage/framework/sessions/**
-            storage/framework/views/**
-            .env
+#       - name: Optimize Laravel
+#         run: |
+#           php artisan config:cache || true
+#           php artisan route:cache || true
+#           php artisan view:cache || true
+
+#       - name: Deploy to cPanel via FTP
+#         uses: SamKirkland/FTP-Deploy-Action@4.3.3
+#         with:
+#           server: ${{ secrets.FTP_SERVER }}
+#           username: ${{ secrets.FTP_USERNAME }}
+#           password: ${{ secrets.FTP_PASSWORD }}
+#           port: ${{ secrets.FTP_PORT }}
+#           server-dir: /public_html/
+#           passive: true
+#           timeout: 900
+#           exclude: |
+#             **/.git*
+#             **/.github*
+#             node_modules/**
+#             tests/**
+#             storage/logs/**
+#             storage/framework/cache/**
+#             storage/framework/sessions/**
+#             storage/framework/views/**
+#             .env

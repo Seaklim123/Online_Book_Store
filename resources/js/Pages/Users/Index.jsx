@@ -1,5 +1,6 @@
 import Breadcrumb from '@/Components/Breadcrumb';
 import DangerButton from '@/Components/DangerButton';
+import InputError from '@/Components/InputError';
 import Modal from '@/Components/Modal';
 import NavLink from '@/Components/NavLink';
 import Pagination from '@/Components/Pagination';
@@ -8,9 +9,10 @@ import SecondaryButton from '@/Components/SecondaryButton';
 import SecondaryButtonLink from '@/Components/SecondaryButtonLink';
 import AdminLayout from '@/Layouts/AdminLayout';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
 import moment from 'moment';
 import { useState } from 'react';
+import Swal from 'sweetalert2';
 
 export default function UserPage({ users }) {
     const { auth } = usePage().props;
@@ -18,12 +20,27 @@ export default function UserPage({ users }) {
     
     const datasList = users.data;
     const [confirmingDataDeletion, setConfirmingDataDeletion] = useState(false);
+    const [showResetPasswordModal, setShowResetPasswordModal] = useState(false);
+    const [resetTargetUser, setResetTargetUser] = useState(null);
     const [dataEdit, setDataEdit] = useState({})
     const { data: deleteData, setData: setDeleteData, delete: destroy, processing, reset, errors, clearErrors } =
         useForm({
             id: '',
             name: ''
         });
+
+    const {
+        data: resetPasswordData,
+        setData: setResetPasswordData,
+        patch: patchResetPassword,
+        processing: processingResetPassword,
+        reset: resetResetPassword,
+        errors: resetPasswordErrors,
+        clearErrors: clearResetPasswordErrors,
+    } = useForm({
+        password: '',
+        password_confirmation: '',
+    });
 
     const confirmDataDeletion = (data) => {
         setDataEdit(data);
@@ -49,6 +66,72 @@ export default function UserPage({ users }) {
     };
     const headWeb = 'User List'
     const linksBreadcrumb = [{ title: 'Home', url: '/' }, { title: headWeb, url: '' }];
+
+    const handleBlockUser = async (user) => {
+        const action = user?.is_blocked ? 'unblock' : 'block';
+
+        const result = await Swal.fire({
+            title: `${action.charAt(0).toUpperCase() + action.slice(1)} User`,
+            text: `Are you sure you want to ${action} ${user.name}?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: action === 'block' ? '#d33' : '#16a34a',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: `Yes, ${action}`,
+            cancelButtonText: 'Cancel',
+        });
+
+        if (!result.isConfirmed) {
+            return;
+        }
+
+        router.patch(route('users.block', user.id), {}, {
+            preserveScroll: true,
+            onSuccess: () => {
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: `User ${action}ed successfully`,
+                    showConfirmButton: false,
+                    timer: 1800,
+                    timerProgressBar: true,
+                });
+            },
+            onError: () => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Failed',
+                    text: `Unable to ${action} this user.`,
+                });
+            },
+        });
+    };
+
+    const handleResetPassword = (user) => {
+        setResetTargetUser(user);
+        setShowResetPasswordModal(true);
+    };
+
+    const closeResetPasswordModal = () => {
+        setShowResetPasswordModal(false);
+        setResetTargetUser(null);
+        resetResetPassword();
+        clearResetPasswordErrors();
+    };
+
+    const submitResetPassword = (e) => {
+        e.preventDefault();
+
+        if (!resetTargetUser) {
+            return;
+        }
+
+        patchResetPassword(route('users.reset-password', resetTargetUser.id), {
+            preserveScroll: true,
+            onSuccess: () => closeResetPasswordModal(),
+        });
+    };
     
     return (
         <AdminLayout breadcrumb={<Breadcrumb header={headWeb} links={linksBreadcrumb} />} >
@@ -80,6 +163,7 @@ export default function UserPage({ users }) {
                                             <th>Name</th>
                                             <th>Email</th>
                                             <th>Role</th>
+                                            <th>Status</th>
                                             <th>Created At</th>
                                             <th>Action</th>
                                         </tr>
@@ -103,12 +187,36 @@ export default function UserPage({ users }) {
                                                             <span className="badge badge-info mr-1">customer</span>
                                                         )}
                                                     </td>
+                                                    <td>
+                                                        {item?.is_blocked ? (
+                                                            <span className="badge badge-danger">Blocked</span>
+                                                        ) : (
+                                                            <span className="badge badge-success">Active</span>
+                                                        )}
+                                                    </td>
                                                     <td>{moment(item?.created_at).format("DD/MM/YYYY")}</td>
-                                                    <td width={'170px'}>
+                                                    <td width={'280px'}>
                                                         {can['user-edit'] && (
-                                                            <Link href={route('users.edit', item.id)} className="btn btn-info btn-xs mr-2">
-                                                                <i className='fas fa-edit'></i> Edit
-                                                            </Link>
+                                                            <>
+                                                                <Link href={route('users.edit', item.id)} className="btn btn-info btn-xs mr-2 mb-1">
+                                                                    <i className='fas fa-edit'></i> Edit
+                                                                </Link>
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => handleBlockUser(item)}
+                                                                    className={`btn btn-xs mr-2 mb-1 ${item?.is_blocked ? 'btn-success' : 'btn-warning'}`}
+                                                                >
+                                                                    <i className={`fas ${item?.is_blocked ? 'fa-unlock' : 'fa-ban'}`}></i>{' '}
+                                                                    {item?.is_blocked ? 'Unblock' : 'Block'}
+                                                                </button>
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => handleResetPassword(item)}
+                                                                    className="btn btn-secondary btn-xs mb-1"
+                                                                >
+                                                                    <i className="fas fa-key"></i> Reset Password
+                                                                </button>
+                                                            </>
                                                         )}
                                                         {/* <button onClick={() => confirmDataDeletion(item)} type="button" className="btn btn-danger btn-xs">
                                                             <i className='fas fa-trash'></i> Delete
@@ -134,6 +242,48 @@ export default function UserPage({ users }) {
                                         <div className="mt-6 flex justify-end">
                                             <SecondaryButton onClick={closeModal}>No</SecondaryButton>
                                             <DangerButton className="ms-3" disabled={processing}>Yes</DangerButton>
+                                        </div>
+                                    </form>
+                                </Modal>
+
+                                <Modal show={showResetPasswordModal} onClose={closeResetPasswordModal}>
+                                    <form onSubmit={submitResetPassword} className="p-6">
+                                        <h2 className="text-lg font-medium text-gray-900">
+                                            Reset Password
+                                        </h2>
+                                        <p className="mt-1 text-sm text-gray-600">
+                                            Set a new password for <span className="font-medium">{resetTargetUser?.name}</span>.
+                                        </p>
+
+                                        <div className="mt-4">
+                                            <label className="block text-sm font-medium text-gray-700">New Password</label>
+                                            <input
+                                                type="password"
+                                                value={resetPasswordData.password}
+                                                onChange={(e) => setResetPasswordData('password', e.target.value)}
+                                                className="mt-1 block w-full form-control"
+                                                minLength={8}
+                                                required
+                                            />
+                                            <InputError className="mt-2" message={resetPasswordErrors.password} />
+                                        </div>
+
+                                        <div className="mt-4">
+                                            <label className="block text-sm font-medium text-gray-700">Confirm New Password</label>
+                                            <input
+                                                type="password"
+                                                value={resetPasswordData.password_confirmation}
+                                                onChange={(e) => setResetPasswordData('password_confirmation', e.target.value)}
+                                                className="mt-1 block w-full form-control"
+                                                minLength={8}
+                                                required
+                                            />
+                                            <InputError className="mt-2" message={resetPasswordErrors.password_confirmation} />
+                                        </div>
+
+                                        <div className="mt-6 flex justify-end">
+                                            <SecondaryButton type="button" onClick={closeResetPasswordModal}>Cancel</SecondaryButton>
+                                            <PrimaryButton className="ms-3" disabled={processingResetPassword}>Save</PrimaryButton>
                                         </div>
                                     </form>
                                 </Modal>

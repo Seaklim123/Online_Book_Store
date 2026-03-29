@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use App\Models\User;
@@ -81,5 +82,36 @@ class UserController extends Controller
         $user->delete();
 
         return to_route('users.index')->with("success", "User Deleted successfully");
+    }
+
+    public function block($id)
+    {
+
+        $user = User::findOrFail($id);
+        if (Auth::id() === $user->id) {
+            return to_route('users.index')->with('error', 'You cannot block your own account.');
+        }
+
+        $user->is_blocked = ! (bool) $user->is_blocked;
+        $user->save();
+
+        return to_route('users.index')->with(
+            'success',
+            $user->is_blocked ? 'User blocked successfully.' : 'User unblocked successfully.'
+        );
+    }
+
+    public function resetPassword(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        $validated = Validator::make($request->all(), [
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ])->validate();
+
+        $user->password = Hash::make($validated['password']);
+        $user->save();
+
+        return to_route('users.index')->with('success', 'Password reset successfully.');
     }
 }

@@ -35,15 +35,15 @@ class Book extends Model
 
     public function discount()
     {
-        // a book belongs to a discount record (nullable)
+        
         return $this->belongsTo(Discount::class);
     }
 
-    /**
-     * Returns the price after applying the associated discount, if any.
-     * Uses the current percent on the related model and only applies when
-     * the discount is active (between start and end dates).
-     */
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+    
     public function getDiscountedPriceAttribute(): ?float
     {
         if (! $this->discount) {

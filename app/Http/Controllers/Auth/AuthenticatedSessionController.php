@@ -32,8 +32,8 @@ class AuthenticatedSessionController extends Controller
             return redirect()->intended(route('dashboard', absolute: false));
         }
 
-        // Default for regular users
-        return redirect()->intended(route('welcome', absolute: false)); // or '/'
+        
+        return redirect()->intended(route('welcome', absolute: false)); 
         }
 
     public function destroy(Request $request): RedirectResponse

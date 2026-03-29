@@ -14,9 +14,14 @@ export default function Index({ books, auth, categories }) {
     useEffect(() => {
         let filtered = books.data;
         if (search.trim() !== '') {
-            filtered = filtered.filter(book =>
-                book.title.toLowerCase().includes(search.toLowerCase())
-            );
+            const searchLower = search.toLowerCase();
+            filtered = filtered.filter(book => {
+                const titleMatch = book.title.toLowerCase().includes(searchLower);
+                const authorMatch = (book.author || '').toLowerCase().includes(searchLower);
+                const price = Number(book.discounted_price ?? book.price ?? 0);
+                const priceMatch = price.toString().includes(search) || price.toFixed(2).includes(search);
+                return titleMatch || authorMatch || priceMatch;
+            });
         }
         if (filterCategory) {
             filtered = filtered.filter(
@@ -67,8 +72,6 @@ export default function Index({ books, auth, categories }) {
     });
     };
 
-    const isBestSeller = (book) => book.times_sold > 50 || Math.random() > 0.8; 
-
     return (
         <div className="min-h-screen flex flex-col bg-[#f5eadf]">
             <Head title="Books Store" />
@@ -111,6 +114,7 @@ export default function Index({ books, auth, categories }) {
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
                     {filteredBooks.length > 0 ? (
                         filteredBooks.map(book => (
+                            console.log(book),
                             <div key={book.id} className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col h-full border border-gray-100">
                                 <div 
                                     className="relative aspect-[2/3] overflow-hidden bg-gray-200 cursor-pointer"
@@ -138,12 +142,6 @@ export default function Index({ books, auth, categories }) {
                                             </span>
                                         )}
                                     </div>
-
-                                    {isBestSeller(book) && (
-                                        <div className="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-lg rotate-[-5deg]">
-                                            ⭐ BEST SELLER
-                                        </div>
-                                    )}
                                 </div>
                                 
                                 <div className="p-3 flex flex-col flex-grow">

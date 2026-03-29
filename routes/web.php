@@ -138,6 +138,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/{id}', [UserController::class, 'edit'])->name('users.edit')->middleware(['check:user-edit']);
         Route::post("/", [UserController::class, 'store'])->name('users.store');
         Route::patch("/{id}", [UserController::class, 'update'])->name('users.update');
+        Route::patch('/{id}/block', [UserController::class, 'block'])->name('users.block');
+        Route::patch('/{id}/reset-password', [UserController::class, 'resetPassword'])->name('users.reset-password');
         Route::delete("/{id}", [UserController::class, 'destroy'])->name('users.destroy')->middleware(['check:user-delete']);
     });
 });
