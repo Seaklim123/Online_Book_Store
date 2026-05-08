@@ -24,17 +24,18 @@ class AuthenticatedSessionController extends Controller
     public function store(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
+        if ($request->session()->has('login.id')) {
+            return redirect()->route('two-factor.login');
+        }
+
         $request->session()->regenerate();
 
-
-        // Add this logic here:
         if ($request->user()->hasRole('admin')) {
             return redirect()->intended(route('dashboard', absolute: false));
         }
 
-        
         return redirect()->intended(route('welcome', absolute: false)); 
-        }
+    }
 
     public function destroy(Request $request): RedirectResponse
     {
@@ -42,8 +43,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        
-        $request->session()->flash('success', 'Logged out');
-        return redirect()->route('welcome');
+
+        return redirect()->route('welcome')->with('success', 'Logged out');
     }
 }

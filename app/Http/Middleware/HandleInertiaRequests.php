@@ -47,6 +47,7 @@ class HandleInertiaRequests extends Middleware
                     : [],
                 'cartCount' => $activeCart ? $activeCart->items->count() : 0,
                 'pendingOrdersCount' => $user ? \App\Models\Order::where('status', 'pending')->count() : 0,
+                'two_factor_enabled' => $request->user()?->two_factor_confirmed_at !== null,
             ],
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),

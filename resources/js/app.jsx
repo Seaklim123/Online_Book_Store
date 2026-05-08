@@ -1,5 +1,6 @@
 import '../css/app.css';
 import './bootstrap';
+import './i18n';
 
 // Import jQuery and Bootstrap (Required for dropdowns)
 import $ from 'jquery';

@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { Link, useForm, Head } from '@inertiajs/react';
 import { usePage } from '@inertiajs/react';
 import { Inertia } from '@inertiajs/inertia';
+import { useTranslation } from 'react-i18next';
+import i18n from '../i18n';
 
 export default function LoginModal({  isOpen: propIsOpen, onClose, onOpenRegister, status, canResetPassword })  {
     const page = usePage();
@@ -10,6 +12,7 @@ export default function LoginModal({  isOpen: propIsOpen, onClose, onOpenRegiste
         password: '',
         remember: false,
     });
+    const { t } = useTranslation();
 
     const [isOpen, setIsOpen] = useState(!!propIsOpen);
     const [countdown, setCountdown] = useState(null);
@@ -72,7 +75,13 @@ export default function LoginModal({  isOpen: propIsOpen, onClose, onOpenRegiste
                 console.log(auth.user?.roles);
                 const isAdmin = auth.user?.roles?.some(role => role.name.toLowerCase() === 'admin');
                
-                Inertia.visit(isAdmin ? '/dashboard' : '/');
+                const handleSubmit = (e) => {
+                    e.preventDefault();
+
+                    post(route('login'), {
+                        onFinish: () => reset('password'),
+                    });
+                };
 
                 if (onClose) onClose();
             },
@@ -95,13 +104,13 @@ export default function LoginModal({  isOpen: propIsOpen, onClose, onOpenRegiste
                     onClick={close}
                     className="absolute -top-3 -right-3 bg-white rounded-full p-1 shadow text-gray-700 hover:text-gray-900"
                 >
-                    ✕
+                    <i className="fas fa-times"></i>
                 </button>
 
                 <div className="bg-white rounded-xl shadow-2xl p-6 w-full">
                     <div className="text-center mb-6">
-                        <h1 className="text-2xl font-bold text-gray-800 mb-1">Welcome Back</h1>
-                        <p className="text-gray-600">Log in to your account</p>
+                        <h1 className="text-2xl font-bold text-gray-800 mb-1">{t('welcome_back')}</h1>
+                        <p className="text-gray-600">{t('login_to_your_account')}</p>
                         <img
                             src="/images/jong an.png"
                             alt="Login Illustration"
@@ -133,7 +142,7 @@ export default function LoginModal({  isOpen: propIsOpen, onClose, onOpenRegiste
                             name="email"
                             value={data.email}
                             onChange={(e) => setData('email', e.target.value)}
-                            placeholder="Email"
+                            placeholder={t('email')}
                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ddac78]"
                             required
                         />
@@ -142,7 +151,7 @@ export default function LoginModal({  isOpen: propIsOpen, onClose, onOpenRegiste
                             name="password"
                             value={data.password}
                             onChange={(e) => setData('password', e.target.value)}
-                            placeholder="Password"
+                            placeholder={t('password')}
                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ddac78]"
                             required
                         />
@@ -156,7 +165,7 @@ export default function LoginModal({  isOpen: propIsOpen, onClose, onOpenRegiste
                                     onChange={(e) => setData('remember', e.target.checked)}
                                     className="h-4 w-4 text-[#bda081] border-gray-300 rounded"
                                 />
-                                <span className="ms-2 text-sm text-gray-600">Remember me</span>
+                                <span className="ms-2 text-sm text-gray-600">{t('remember_me')}</span>
                             </label>
 
                             {canResetPassword && (
@@ -164,7 +173,7 @@ export default function LoginModal({  isOpen: propIsOpen, onClose, onOpenRegiste
                                     href={route('password.request')}
                                     className="text-[#bda081] hover:text-[#ddac78] text-sm font-semibold"
                                 >
-                                    Forgot password?
+                                    {t('forgot_password')}
                                 </Link>
                             )}
                         </div>
@@ -174,14 +183,14 @@ export default function LoginModal({  isOpen: propIsOpen, onClose, onOpenRegiste
                             disabled={processing || isLocked}
                             className="w-full bg-[#bda081] text-white py-3 rounded-lg font-semibold hover:bg-[#ddac78] transition duration-200 disabled:bg-[#bda081]"
                         >
-                            {isLocked ? `Locked (${countdown}s)` : processing ? 'Logging in...' : 'Log in'}
+                            {isLocked ? `Locked (${countdown}s)` : processing ? t('logging_in') : t('log_in')}
                         </button>
                     </form>
 
                     <div className="mt-4">
                         <div className="flex items-center gap-3 my-3">
                             <div className="flex-1 h-px bg-gray-200" />
-                            <div className="text-sm text-gray-500">or</div>
+                            <div className="text-sm text-gray-500">{t('or')}</div>
                             <div className="flex-1 h-px bg-gray-200" />
                         </div>
 
@@ -200,19 +209,19 @@ export default function LoginModal({  isOpen: propIsOpen, onClose, onOpenRegiste
                                 <path d="M118.2 329.7c-10.8-32.3-10.8-66.9 0-99.2V159.4H30.8c-39.6 78.6-39.6 171.6 0 250.2l87.4-79.9z" fill="#FBBC05"/>
                                 <path d="M272 108.6c39 0 74 13.4 101.6 39.8l76.1-76.1C405.7 28.4 344 0 272 0 167 0 75.5 52.7 30.8 139.3l87.4 71.1C139.9 156.9 200.5 108.6 272 108.6z" fill="#EA4335"/>
                             </svg>
-                            Continue with Google
+                           {t('continue_with_google')}
                         </a>
                     </div>
 
                     <div className="mt-4 text-center">
                         <p className="text-gray-600">
-                            Don't have an account?{' '}
+                            {t('dont_have_account')}{' '}
                             <button
                                 type="button" 
                                 onClick={onOpenRegister} 
                                 className="text-[#bda081] hover:text-[#ddac78] font-semibold"
                             >
-                                Register
+                                {t('register')}
                             </button>
                         </p>
                     </div>

@@ -61,7 +61,7 @@ class BookController extends Controller
     $request->validate([
         'category_id' => 'required|exists:categories,id',
         'title'       => 'required|string|max:255|regex:/^[a-zA-Z\s]+$/',
-        'pages'       => 'required|integer|min:1|max:255',
+        'pages'       => 'required|integer|min:1|max:500',
         'author'      => 'required|string|max:255',
         'price'       => 'required|numeric|min:0',
         'discount_id' => 'nullable|exists:discounts,id',
@@ -113,7 +113,7 @@ class BookController extends Controller
     $request->validate([
         'category_id' => 'required|exists:categories,id',
         'title'       => 'required|string|max:255|regex:/[a-zA-Z]/',
-        'pages'       => 'required|integer|min:1|max:255',
+        'pages'       => 'required|integer|min:1|max:500',
         'author'      => 'required|string|max:255',
         'description' => 'nullable|string',
         'price'       => 'required|numeric|min:0',

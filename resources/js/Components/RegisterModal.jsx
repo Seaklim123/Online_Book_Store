@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { Link, Head, useForm } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
+
 
 export default function RegisterModal({ isOpen, onClose, onOpenLogin }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -9,6 +11,7 @@ export default function RegisterModal({ isOpen, onClose, onOpenLogin }) {
         password_confirmation: '',
     });
 
+    const { t } = useTranslation();
     const [customError, setCustomError] = useState('');
 
     const handleSubmit = (e) => {
@@ -52,14 +55,13 @@ export default function RegisterModal({ isOpen, onClose, onOpenLogin }) {
                     onClick={onClose}
                     className="absolute -top-3 -right-3 bg-white rounded-full p-1 shadow text-gray-700 hover:text-gray-900"
                 >
-                    ✕
+                    <i className="fas fa-times"></i>
                 </button>
 
                 <div className="bg-white rounded-xl shadow-2xl p-6 w-full">
-                    {/* Form Content */}
                     <div className="text-center mb-6">
-                        <h1 className="text-2xl font-bold text-gray-800 mb-1">Create Account</h1>
-                        <p className="text-gray-600">Join our bookstore community</p>
+                        <h1 className="text-2xl font-bold text-gray-800 mb-1">{t('create_account')}</h1>
+                        <p className="text-gray-600">{t('join_our_bookstore')}</p>
                         <img
                             src="/images/jong an.png"
                             alt="Register Illustration"
@@ -79,7 +81,7 @@ export default function RegisterModal({ isOpen, onClose, onOpenLogin }) {
                             name="name"
                             value={data.name}
                             onChange={(e) => setData('name', e.target.value)}
-                            placeholder="Full Name"
+                            placeholder={t('full_name')}
                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ddac78]"
                             required
                         />
@@ -88,7 +90,7 @@ export default function RegisterModal({ isOpen, onClose, onOpenLogin }) {
                             name="email"
                             value={data.email}
                             onChange={(e) => setData('email', e.target.value)}
-                            placeholder="Email"
+                            placeholder={t('email')}
                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ddac78]"
                             required
                         />
@@ -97,7 +99,7 @@ export default function RegisterModal({ isOpen, onClose, onOpenLogin }) {
                             name="password"
                             value={data.password}
                             onChange={(e) => setData('password', e.target.value)}
-                            placeholder="Password"
+                            placeholder={t('password')}
                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ddac78]"
                             required
                         />
@@ -106,7 +108,7 @@ export default function RegisterModal({ isOpen, onClose, onOpenLogin }) {
                             name="password_confirmation"
                             value={data.password_confirmation}
                             onChange={(e) => setData('password_confirmation', e.target.value)}
-                            placeholder="Confirm Password"
+                            placeholder={t('confirm_password')}
                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ddac78]"
                             required
                         />
@@ -116,14 +118,14 @@ export default function RegisterModal({ isOpen, onClose, onOpenLogin }) {
                             disabled={processing}
                             className="w-full bg-[#bda081] text-white py-3 rounded-lg font-semibold hover:bg-[#ddac78] transition duration-200"
                         >
-                            {processing ? 'Creating Account...' : 'Register'}
+                            {processing ? t('creating_account') : t('create_account')}
                         </button>
                     </form>
 
                     <div className="mt-4">
                         <div className="flex items-center gap-3 my-3">
                             <div className="flex-1 h-px bg-gray-200" />
-                            <div className="text-sm text-gray-500">or</div>
+                            <div className="text-sm text-gray-500">{t('or')}</div>
                             <div className="flex-1 h-px bg-gray-200" />
                         </div>
 
@@ -142,20 +144,20 @@ export default function RegisterModal({ isOpen, onClose, onOpenLogin }) {
                                 <path d="M118.2 329.7c-10.8-32.3-10.8-66.9 0-99.2V159.4H30.8c-39.6 78.6-39.6 171.6 0 250.2l87.4-79.9z" fill="#FBBC05"/>
                                 <path d="M272 108.6c39 0 74 13.4 101.6 39.8l76.1-76.1C405.7 28.4 344 0 272 0 167 0 75.5 52.7 30.8 139.3l87.4 71.1C139.9 156.9 200.5 108.6 272 108.6z" fill="#EA4335"/>
                             </svg>
-                            Continue with Google
+                            {t('continue_with_google')}
                         </a>
                     </div>
 
                     <div className="mt-4 text-center">
                         <p className="text-gray-600">
-                            Already have an account?{' '}
+                            {t('already_have_account')}{' '}
                             <button
-    type="button"
-    onClick={onOpenLogin}
-    className="text-[#bda081] hover:text-[#ddac78] font-semibold"
->
-    Login here
-</button>
+                                type="button"
+                                onClick={onOpenLogin}
+                                className="text-[#bda081] hover:text-[#ddac78] font-semibold"
+                            >
+                             {t('login_here')}
+                            </button>
                         </p>
                     </div>
                 </div>

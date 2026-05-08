@@ -49,6 +49,19 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        $user = Auth::user();
+        if (! empty($user->two_factor_secret)) {
+
+            $this->session()->put('login.id', $user->id);
+            $this->session()->put('login.remember', $this->boolean('remember'));
+
+            Auth::logout(); 
+
+            RateLimiter::clear($this->throttleKey());
+            return;
+        }
+
+        Auth::login($user, $this->boolean('remember'));
         RateLimiter::clear($this->throttleKey());
     }
 

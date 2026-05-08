@@ -5,50 +5,45 @@ const Footer = () => {
         <footer className="bg-[#bda081] text-white mt-12 rounded-b-lg shadow-inner">
             <div className="container mx-auto px-4 py-8">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    
-                    {/* About Section */}
                     <div>
-                        <h3 className="text-xl font-bold mb-4">📚 Bookstore</h3>
+                        <h3 className="text-xl font-bold mb-4"><i className='fas fa-book'></i> Bookstore</h3>
                         <p className="text-black">
                             Your one-stop shop for all your reading needs.
                             Discover thousands of books across all genres.
                         </p>
                     </div>
-
-                    {/* Quick Links */}
                     <div>
                         <h3 className="text-xl font-bold mb-4">Quick Links</h3>
-                        <ul className="space-y-2 text-black">
+                        <ul className="space-y-2">
                             <li>
-                                <Link href={route('welcome')} className="hover:text-black">
+                                <Link href={route('welcome')} className="text-black hover:text-blue-500">
                                     Home
                                 </Link>
                             </li>
                             <li>
-                                <Link href={route('books.index')} className="hover:text-black">
+                                <Link href={route('customer.books.index')} className="text-black hover:text-blue-500">
                                     Books
                                 </Link>
                             </li>
                             <li>
-                                <Link href={route('about')} className="hover:text-black ">
+                                <Link href="#" className="text-black hover:text-blue-500">
                                     About Us
                                 </Link>
                             </li>
                             <li>
-                                <Link href={route('contact')} className="hover:text-black">
+                                <Link href="#" className="text-black hover:text-blue-500">
                                     Contact
                                 </Link>
                             </li>
                         </ul>
                     </div>
 
-                    {/* Contact Info */}
                     <div>
                         <h3 className="text-xl font-bold mb-4">Contact Us</h3>
                         <ul className="space-y-2 text-black">
-                            <li>📧 Email: info@bookstore.com</li>
-                            <li>📞 Phone: +1 234 567 890</li>
-                            <li>📍 Address: 123 Book Street, Reading City</li>
+                            <li><i className="fas fa-envelope"></i> Email: info@bookstore.com</li>
+                            <li><i className="fas fa-phone"></i> Phone: +885 234 567 890</li>
+                            <li><i className="fas fa-map-marker-alt"></i> Address: 123 Book Street, Reading City</li>
                         </ul>
                     </div>
                 </div>

@@ -2,10 +2,12 @@ import { Head, Link, router } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
 import Navbar from '@/Components/Navbar';
 import Footer from '@/Components/FooterGuest';
+import { useTranslation } from 'react-i18next';
 
 export default function Welcome({ auth, bestSellers = [] }) {
     const [loginOpen, setLoginOpen] = useState(false);
     const [registerOpen, setRegisterOpen] = useState(false);
+    const { t } = useTranslation();
 
     const [scrollY, setScrollY] = useState(0);
 
@@ -56,7 +58,7 @@ export default function Welcome({ auth, bestSellers = [] }) {
 
                 <div className="py-20 bg-white/20">
                     <div className="container mx-auto px-6">
-                        <h2 className="text-4xl font-serif text-center mb-12">Our <span className="text-[#bd874e]">Best Sellers</span></h2>
+                        <h2 className="text-4xl font-serif text-center mb-12">{t('our_best_sellers')}</h2>
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
                             {bestSellers && bestSellers.length > 0 ? (
@@ -95,14 +97,14 @@ export default function Welcome({ auth, bestSellers = [] }) {
                                                 onClick={() => handleAddToCart(book.id)}
                                                 className="mt-4 w-full bg-[#bda081] hover:bg-[#a68b6d] text-white text-xs font-bold py-2 rounded-lg transition-colors flex items-center justify-center gap-2"
                                             >
-                                                <i className="fas fa-shopping-cart"></i> Add to Cart
+                                                <i className="fas fa-shopping-cart"></i>{t('add_to_cart')}
                                             </button>
                                         </div>
                                     </div>
                                 ))
                             ) : (
                                 <div className="col-span-full text-center py-20 bg-white/10 rounded-3xl border-2 border-dashed border-stone-300">
-                                    <p className="text-stone-500 font-serif">No best sellers found in our collection.</p>
+                                    <p className="text-stone-500 font-serif">{t('no_best_sellers_found')}</p>
                                 </div>
                             )}
                         </div>

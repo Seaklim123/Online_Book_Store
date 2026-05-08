@@ -3,6 +3,8 @@ import { Head, Link, router } from '@inertiajs/react';
 import Navbar from '@/Components/Navbar';
 import Footer from '@/Components/FooterGuest';
 import Swal from 'sweetalert2';
+import { useTranslation } from "react-i18next";
+import i18n from "../../../i18n";
 
 export default function Index({ books, auth, categories }) {
     const [loginOpen, setLoginOpen] = useState(false);
@@ -10,6 +12,7 @@ export default function Index({ books, auth, categories }) {
     const [search, setSearch] = useState('');
     const [filterCategory, setFilterCategory] = useState('');
     const [filteredBooks, setFilteredBooks] = useState(books.data || []);
+    const { t } = useTranslation();
 
     useEffect(() => {
         let filtered = books.data;
@@ -36,8 +39,8 @@ export default function Index({ books, auth, categories }) {
     const handleAddToCart = (bookId, quantity = 1) => {
     if (!auth?.user) {
         Swal.fire({
-            title: 'Please Login',
-            text: 'You need to login or register to add books to your cart.',
+            title: t('Please Login'),
+            text: t('You need to login or register to add books to your cart.'),
             icon: 'info',
             confirmButtonColor: '#bda081',
         }).then(() => {
@@ -54,7 +57,7 @@ export default function Index({ books, auth, categories }) {
                 toast: true,
                 position: 'top-end',
                 icon: 'success',
-                title: 'Book added to cart!',
+                title: t('Book added to cart!'),
                 showConfirmButton: false,
                 timer: 2000,
                 timerProgressBar: true,
@@ -64,8 +67,8 @@ export default function Index({ books, auth, categories }) {
             console.error(errors);
             Swal.fire({
                 icon: 'error',
-                title: 'Oops...',
-                text: 'Failed to add book to cart.',
+                title: t('Oops...'),
+                text: t('Failed to add book to cart.'),
                 confirmButtonColor: '#bda081',
             });
         }
@@ -86,12 +89,12 @@ export default function Index({ books, auth, categories }) {
                 <div className="flex flex-col md:flex-row gap-4 mb-10">
                     <div className="relative flex-grow shadow-sm rounded-xl overflow-hidden">
                         <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                            <span className="text-gray-400 text-sm">🔍</span>
+                            <span className="text-gray-400 text-sm"><i className="fas fa-search"></i></span>
                         </div>
                         <input
                             type="text"
                             className="block w-full pl-11 pr-4 py-3 border-none ring-1 ring-gray-200 focus:ring-2 focus:ring-[#bda081] transition-all bg-white text-sm"
-                            placeholder="Search your favorite books..."
+                            placeholder={t('search_your_favorite_books')}
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                         />
@@ -103,7 +106,7 @@ export default function Index({ books, auth, categories }) {
                             value={filterCategory}
                             onChange={(e) => setFilterCategory(e.target.value)}
                         >
-                            <option value="">All Categories</option>
+                            <option value="">{t('all_categories')}</option>
                             {categories.map(cat => (
                                 <option key={cat.id} value={cat.id}>{cat.name}</option>
                             ))}
@@ -163,7 +166,7 @@ export default function Index({ books, auth, categories }) {
                                                     handleAddToCart(book.id);
                                                 }
                                             }}
-                                            className={`w-full text-xs font-bold py-2.5 rounded-xl transition-colors flex items-center justify-center gap-2 shadow-sm
+                                            className={`w-full text-xs font-medium py-2.5 rounded-xl transition-colors flex items-center justify-center gap-2 shadow-sm
                                                 ${book.stock === 0
                                                     ? 'bg-gray-400 cursor-not-allowed text-white'
                                                     : 'bg-[#bda081] hover:bg-[#a68b6d] text-white'
@@ -171,14 +174,14 @@ export default function Index({ books, auth, categories }) {
                                             `}
                                         >
                                             <span>
-                                                {book.stock === 0 ? '❌ Out of Stock' : '🛒 Add to Cart'}
+                                                {book.stock === 0 ? `${t('Out of Stock')}` : `${t('add_to_cart')}`}
                                             </span>
                                         </button>
                                         <button
                                             onClick={() => handleViewBook(book.id)}
                                             className="w-full text-white bg-[#bda081] hover:bg-[#a68b6d] text-[11px] font-medium py-1 rounded-xl transition-colors"
                                         >
-                                            View Details
+                                            {t('view_details')}
                                         </button>
                                     </div>
                                 </div>
@@ -186,7 +189,7 @@ export default function Index({ books, auth, categories }) {
                         ))
                     ) : (
                         <div className="col-span-full text-center py-20 bg-white rounded-3xl shadow-inner">
-                            <p className="text-gray-400 text-lg">No books found matching your search. 📚</p>
+                            <p className="text-gray-400 text-lg">{t('No books found matching your search.')}</p>
                         </div>
                     )}
                 </div>
