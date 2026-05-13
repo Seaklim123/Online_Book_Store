@@ -14,11 +14,6 @@ export default function MenuSideBar() {
 
     return (
         <aside className="main-sidebar sidebar-dark-primary elevation-4">
-            
-            {/* Brand */}
-            <Link href="/" className="brand-link text-center">
-                <span className="brand-text font-weight-light">ADMIN</span>
-            </Link>
 
             <div className="sidebar">
 
@@ -32,7 +27,7 @@ export default function MenuSideBar() {
                         />
                     </div>
                     <div className="info">
-                        <Link href="#" className="d-block">
+                        <Link href="/" className="d-block">
                             {auth?.user?.name}
                         </Link>
                     </div>

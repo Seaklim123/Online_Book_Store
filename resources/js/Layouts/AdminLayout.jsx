@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import 'admin-lte/dist/css/adminlte.min.css'; // Ensure styles are loaded
+import 'admin-lte/dist/css/adminlte.min.css'; 
 import 'admin-lte/dist/js/adminlte.min.js';
 import MenuSideBar from './MenuSideBar';
 import $ from 'jquery';
@@ -9,18 +9,15 @@ const AdminLayout = ({breadcrumb, children }) => {
     
     const { auth } = usePage().props; 
     
-    // Now you can safely access these:
     const pendingOrdersCount = auth.pendingOrdersCount;
     const user = auth.user;
 
     useEffect(() => {
-        // Ensure dropdowns, tooltips, and modals work
         $('[data-toggle="dropdown"]').dropdown();
     }, []);
     
     return (
         <div className="wrapper">
-            {/* Navbar */}
             <nav className="main-header navbar navbar-expand navbar-white navbar-light">
                 <ul className="navbar-nav">
                     <li className="nav-item">
@@ -29,13 +26,11 @@ const AdminLayout = ({breadcrumb, children }) => {
                         </a>
                     </li>
                 </ul>
-                {/* <!-- Right navbar links --> */}
                 <ul className="navbar-nav ml-auto">
-                    {/* Dropdown */}
 
                     <li className="nav-item">
                         <Link 
-                            href={route('orders.index', { status: 'pending' })} // Adds ?status=pending to URL
+                            href={route('orders.index', { status: 'pending' })} 
                             className="nav-link"
                         >
                             <i className="fas fa-shopping-cart"></i> 
@@ -70,13 +65,11 @@ const AdminLayout = ({breadcrumb, children }) => {
 
             <MenuSideBar />
 
-            {/* Content Wrapper */}
             <div className="content-wrapper">
                 {breadcrumb && breadcrumb}
                 <section className="content">{children}</section>
             </div>
 
-            {/* Footer */}
             <footer className="main-footer">
                 <strong>Copyright &copy; 2025</strong> All rights reserved.
             </footer>

@@ -13,7 +13,7 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Inter', 'Noto Sans Khmer', 'ui-sans-serif', 'system-ui'],
+                sans: ['Roboto', 'Noto Sans Khmer', 'ui-sans-serif', 'system-ui'],
             },
         },
     },

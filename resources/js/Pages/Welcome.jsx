@@ -45,9 +45,18 @@ export default function Welcome({ auth, bestSellers = [] }) {
                 <div className="relative min-h-[90vh] flex items-center pt-20">
                     <div className="container mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center">
                         <div>
-                            <span className="inline-block px-4 py-1 rounded-full bg-white/60 text-stone-600 text-sm font-medium mb-6"> New Arrival</span>
-                            <h1 className="text-6xl md:text-8xl font-serif mb-8">Feed Your <br /><span className="italic text-[#bd874e]">Imagination</span></h1>
-                            <p className="text-xl text-stone-600 mb-10 max-w-lg">Discover thousands of books delivered to your door.</p>
+                            <span className="inline-block px-4 py-1 rounded-full bg-white/60 text-stone-600 text-sm font-serif mb-6 backdrop-blur">
+                                Discover Your Next Favorite Book
+                            </span>
+
+                            <h1 className="text-6xl md:text-8xl font-serif leading-tight mb-8">
+                                Stories That <br />
+                                <span className="italic text-[#bd874e]">Stay With You</span>
+                            </h1>
+
+                            <p className="text-xl text-stone-600 mb-10 max-w-lg leading-relaxed">
+                                Explore curated collections, timeless classics, and modern bestsellers — all in one place.
+                            </p>
                             <Link href="/customer/books" className="bg-stone-900 text-white px-8 py-4 rounded-xl font-bold hover:bg-stone-800">Explore Library</Link>
                         </div>
                         <div className="hidden lg:block">
