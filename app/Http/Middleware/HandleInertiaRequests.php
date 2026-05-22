@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Inertia\Middleware;
 use App\Models\ShoppingCart;
 use App\Models\Order;
+use Illuminate\Support\Facades\Auth;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -47,7 +48,10 @@ class HandleInertiaRequests extends Middleware
                     : [],
                 'cartCount' => $activeCart ? $activeCart->items->count() : 0,
                 'pendingOrdersCount' => $user ? \App\Models\Order::where('status', 'pending')->count() : 0,
-                'two_factor_enabled' => $request->user()?->two_factor_confirmed_at !== null,
+                'twoFactorEnabled' => fn () =>
+                    Auth::check()
+                        ? ! is_null(Auth::user()->two_factor_confirmed_at)
+                        : false,
             ],
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),

@@ -10,6 +10,7 @@
   "bookstore": "Bookstore",
   "search_placeholder": "Search for books...",
   "enable_2fa": "Enable 2FA",
+  "disable_2fa": "Disable 2FA",
   "orders": "Orders",
   "hi": "Hi",
   "welcome_back": "Welcome Back",

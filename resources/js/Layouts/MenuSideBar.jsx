@@ -21,7 +21,7 @@ export default function MenuSideBar() {
                 <div className="user-panel mt-3 pb-3 mb-3 d-flex">
                     <div className="image">
                         <img
-                            src="/images/avatar.png"
+                            src="/images/jong an.png"
                             className="img-circle elevation-2"
                             alt="User"
                         />
@@ -111,7 +111,7 @@ export default function MenuSideBar() {
                                 </a>
 
                                 <ul className="nav nav-treeview">
-                                    <li className="nav-item">
+                                    {/* <li className="nav-item">
                                         <Link
                                             href={route('coupons.index')}
                                             className={`nav-link ${route().current('coupons.*') ? 'active' : ''}`}
@@ -119,7 +119,7 @@ export default function MenuSideBar() {
                                             <i className="nav-icon fa-solid fa-tag"></i>
                                             <p>Coupon</p>
                                         </Link>
-                                    </li>
+                                    </li> */}
 
                                     <li className="nav-item">
                                         <Link

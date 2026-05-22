@@ -3,7 +3,7 @@ import { router } from '@inertiajs/react';
 import axios from 'axios';
 
 const confirmPasswordModal = () => {
-    Swal.fire({
+    return Swal.fire({
         title: 'Confirm Password',
         text: 'Please confirm your password to enable 2FA',
         input: 'password',
@@ -28,7 +28,11 @@ const confirmPasswordModal = () => {
             }
         }
     }).then(async (result) => {
-        if (result.isConfirmed) await enableTwoFactor();
+        if (result.isConfirmed) {
+            return await enableTwoFactor();
+        }
+
+        return false;
     });
 };
 
@@ -80,8 +84,10 @@ const enableTwoFactor = async () => {
 
         if (isConfirmed) {
             await showRecoveryCodes();
+            return true;
         } else {
             await axios.delete('/user/two-factor-authentication');
+            return false;
         }
 
     } catch {
@@ -117,7 +123,7 @@ const showRecoveryCodes = async () => {
 };
 
 export const disableTwoFactorModal = () => {
-    Swal.fire({
+     return Swal.fire({
         title: 'Disable 2FA',
         text: 'Confirm your password to disable Two-Factor Authentication',
         input: 'password',
@@ -156,8 +162,15 @@ export const disableTwoFactorModal = () => {
                 });
 
                 router.reload();
+                    
             } catch {
-                Swal.fire({ icon: 'error', title: 'Error', text: 'Could not disable 2FA.', confirmButtonColor: '#bda081' });
+                Swal.fire({ 
+                    icon: 'error', 
+                    title: 'Error', 
+                    text: 'Could not disable 2FA.', 
+                    confirmButtonColor: '#bda081' 
+                });
+                return false;
             }
         }
     });

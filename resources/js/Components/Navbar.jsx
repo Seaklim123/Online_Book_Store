@@ -1,4 +1,4 @@
-import { Link, router } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
 import { useState, useRef, useEffect } from 'react';
 import RegisterModal from '@/Components/RegisterModal';
 import LoginModal from '@/Components/LoginModal';
@@ -8,7 +8,9 @@ import { useTranslation } from 'react-i18next';
 import i18n from '../i18n';
 
 
-const Navbar = ({ auth, loginOpen, setLoginOpen, registerOpen, setRegisterOpen }) => {
+const Navbar = ({ loginOpen, setLoginOpen, registerOpen, setRegisterOpen }) => {
+const { auth, twoFactorEnabled: initialTwoFactorEnabled } = usePage().props;
+const [twoFactorEnabled, setTwoFactorEnabled] = useState(initialTwoFactorEnabled);
 const [isMenuOpen, setIsMenuOpen] = useState(false); 
 const [open, setOpen] = useState(false);
 const menuRef = useRef(null);
@@ -110,19 +112,42 @@ const isAdmin = auth.user?.roles?.some(
 
                                         {open && (
                                             <div className="absolute right-0 mt-3 w-48 bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden z-50">
-                                                <button 
-                                                    onClick={confirmPasswordModal}
-                                                    className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 transition"
-                                                >
-                                                    {t('enable_2fa')}
-                                                </button>
-                                               
+
+                                                {twoFactorEnabled ? (
+                                                    <button
+                                                        onClick={async () => {
+                                                            const success = await disableTwoFactorModal();
+
+                                                            if (success) {
+                                                                setTwoFactorEnabled(false);
+                                                            }
+                                                        }}
+                                                        className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 transition"
+                                                    >
+                                                        {t('disable_2fa')}
+                                                    </button>
+                                                ) : (
+                                                    <button
+                                                        onClick={async () => {
+                                                            const success = await confirmPasswordModal();
+
+                                                            if (success) {
+                                                                setTwoFactorEnabled(true);
+                                                            }
+                                                        }}
+                                                        className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 transition"
+                                                    >
+                                                        {t('enable_2fa')}
+                                                    </button>
+                                                )}
+
                                                 <button
                                                     onClick={logout}
                                                     className="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50 transition"
                                                 >
                                                     {t('logout')}
                                                 </button>
+
                                             </div>
                                         )}
                                     </div>
