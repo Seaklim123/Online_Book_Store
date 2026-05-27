@@ -72,5 +72,10 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(Order::class, 'customer_id');  
     }
 
+    public function watchlist()
+    {
+        return $this->hasMany(Watchlist::class);
+    }
+
 
 }

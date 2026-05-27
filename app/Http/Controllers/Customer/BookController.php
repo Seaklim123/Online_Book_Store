@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Book;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use App\Models\Watchlist;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class BookController extends Controller
@@ -40,6 +42,11 @@ class BookController extends Controller
                 'min_price',
                 'max_price'
             ]),
+
+            'watchlistIds' => Auth::check()
+            ? Watchlist::where('user_id', Auth::id())
+                ->pluck('book_id')
+            : [],
         ]);
     }
 

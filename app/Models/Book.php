@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Override;
 
 class Book extends Model
 {
@@ -42,6 +43,11 @@ class Book extends Model
     public function orderItems()
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    public function watchlists()
+    {
+        return $this->hasMany(Watchlist::class);
     }
     
     public function getDiscountedPriceAttribute(): ?float

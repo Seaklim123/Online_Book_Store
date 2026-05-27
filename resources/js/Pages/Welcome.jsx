@@ -4,12 +4,13 @@ import Navbar from '@/Components/Navbar';
 import Footer from '@/Components/FooterGuest';
 import { useTranslation } from 'react-i18next';
 
-export default function Welcome({ auth, bestSellers = [] }) {
+export default function Welcome({ auth, bestSellers = [], watchlistIds = [] }) {
     const [loginOpen, setLoginOpen] = useState(false);
     const [registerOpen, setRegisterOpen] = useState(false);
     const { t } = useTranslation();
 
     const [scrollY, setScrollY] = useState(0);
+    
 
     useEffect(() => {
         const handleScroll = () => setScrollY(window.scrollY);
@@ -28,6 +29,11 @@ export default function Welcome({ auth, bestSellers = [] }) {
 
     const handleViewBook = (bookId) => {
         router.get(route('books.show', bookId));
+    };
+
+    const addToWatchlist = (bookId) => {
+        router.post(`/watchlist/${bookId}`);
+        setLocalWatchlist(prev => [...prev, bookId]);
     };
 
     return (
@@ -72,7 +78,7 @@ export default function Welcome({ auth, bestSellers = [] }) {
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
                             {bestSellers && bestSellers.length > 0 ? (
                                 bestSellers.map((book) => (
-                                    <div key={book.id} className="group bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col border border-gray-100">
+                                    <div key={book.id} className="relative group bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col border border-gray-100">
                                        
                                         <div className="relative aspect-[2/3] overflow-hidden bg-gray-200 cursor-pointer" onClick={() => handleViewBook(book.id)}>
                                             <img 
@@ -90,6 +96,27 @@ export default function Welcome({ auth, bestSellers = [] }) {
                                                     BEST SELLER
                                                 </div>
                                             )}
+
+                                             <button
+                                                onClick={() => addToWatchlist(book.id)}
+                                                className={`group absolute top-2 right-2 z-20 p-2 rounded-full shadow transition
+                                                
+                                                    ${watchlistIds.includes(book.id)
+                                                        ? 'bg-red-500'
+                                                        : 'bg-white hover:bg-red-500'
+                                                    }
+                                                `}
+                                            >
+                                                <i
+                                                    className={`fas fa-heart
+                                                    
+                                                        ${watchlistIds.includes(book.id)
+                                                            ? 'text-white'
+                                                            : 'text-[#bda081] group-hover:text-red-500'
+                                                        }
+                                                    `}
+                                                ></i>
+                                            </button>
                                         </div>
 
                                        

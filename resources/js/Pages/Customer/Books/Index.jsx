@@ -6,7 +6,7 @@ import Swal from 'sweetalert2';
 import { useTranslation } from "react-i18next";
 import i18n from "../../../i18n";
 
-export default function Index({ books, auth, categories }) {
+export default function Index({ books, auth, categories, watchlistIds }) {
     const [loginOpen, setLoginOpen] = useState(false);
     const [registerOpen, setRegisterOpen] = useState(false);
     const [search, setSearch] = useState('');
@@ -75,6 +75,10 @@ export default function Index({ books, auth, categories }) {
     });
     };
 
+    const addToWatchlist = (bookId) => {
+        router.post(`/watchlist/${bookId}`);
+    };
+
     return (
         <div className="min-h-screen flex flex-col bg-[#f5eadf]">
             <Head title="Books Store" />
@@ -118,7 +122,7 @@ export default function Index({ books, auth, categories }) {
                     {filteredBooks.length > 0 ? (
                         filteredBooks.map(book => (
                             console.log(book),
-                            <div key={book.id} className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col h-full border border-gray-100">
+                            <div key={book.id} className="relative group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col h-full border border-gray-100">
                                 <div 
                                     className="relative aspect-[2/3] overflow-hidden bg-gray-200 cursor-pointer"
                                     onClick={() => handleViewBook(book.id)}
@@ -146,6 +150,27 @@ export default function Index({ books, auth, categories }) {
                                         )}
                                     </div>
                                 </div>
+
+                               <button
+                                    onClick={() => addToWatchlist(book.id)}
+                                    className={`group absolute top-2 right-2 z-20 p-2 rounded-full shadow transition
+                                    
+                                        ${watchlistIds.includes(book.id)
+                                            ? 'bg-red-500'
+                                            : 'bg-white hover:bg-red-500'
+                                        }
+                                    `}
+                                >
+                                    <i
+                                        className={`fas fa-heart
+                                        
+                                            ${watchlistIds.includes(book.id)
+                                                ? 'text-white'
+                                                : 'text-[#bda081] group-hover:text-red-500'
+                                            }
+                                        `}
+                                    ></i>
+                                </button>
                                 
                                 <div className="p-3 flex flex-col flex-grow">
                                     <div className="flex-grow">

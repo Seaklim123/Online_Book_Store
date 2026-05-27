@@ -16,6 +16,7 @@ use App\Http\Controllers\Customer\BookController as CustomerBookController;
 use App\Http\Controllers\Customer\ShoppingCartController;
 use App\Http\Controllers\Customer\OrderController as CustomerOrderController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\WatchlistController;
 use App\Http\Controllers\Customer\CheckoutController;
 Use App\Http\Controllers\CouponController;
 use App\Http\Controllers\DiscountController;
@@ -164,6 +165,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/customer/orders', [CustomerOrderController::class, 'index'])->name('customer.orders.index');
     Route::get('/customer/orders/{order}', [CustomerOrderController::class, 'show'])->name('customer.orders.show');
     Route::get('/customer/orders/{order}/invoice', [CustomerOrderController::class, 'invoice'])->name('orders.invoice');
+
+    Route::get('/watchlist', [WatchlistController::class, 'index'])->name('watchlist.index');
+    Route::post('/watchlist/add/{book}', [WatchlistController::class, 'add'])->name('watchlist.add');
+    Route::post('/watchlist/{book}', [WatchlistController::class, 'store'])->name('watchlist.store');
+    Route::delete('/watchlist/remove/{book}', [WatchlistController::class, 'destroy'])->name('watchlist.destroy');
 });
 
 require __DIR__.'/auth.php';

@@ -98,7 +98,19 @@ const isAdmin = auth.user?.roles?.some(
                                                     )}
                                                 </div>
                                             </Link>
+
                                             <Link href="/customer/orders" className="text-white hover:!text-blue-500 transition">{t('orders')}</Link>
+                                            
+                                            <Link href="/watchlist" className="text-white hover:!text-blue-500 transition flex items-center gap-1 group">
+                                                <div className="relative">
+                                                    <span className="text-xl"><i className="fas fa-heart"></i></span>
+                                                    {auth.watchlistCount > 0 && (
+                                                        <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold h-5 w-5 flex items-center justify-center rounded-full border-2 border-[#bda081]">
+                                                            {auth.watchlistCount}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            </Link>
                                         </>
                                     )}
                                     <span className="text-sm font-medium">{t('hi')}, {auth.user.name}</span>
